@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:messenger/components/my_button.dart';
 import 'package:messenger/components/my_text_field.dart';
+import 'package:messenger/services_or_auth/authService.dart';
+import 'package:provider/provider.dart';
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
   const RegisterPage({super.key,required this.onTap});
@@ -16,8 +18,27 @@ class _RegisterPageState extends State<RegisterPage> {
   final ConfirmPasswordController = TextEditingController();
 
   //sign up user
-  void signUp(){
-
+  void signUp() async {
+    if(passwordController.text != ConfirmPasswordController.text){
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:Text("Password do not match"),
+          ),
+      );
+      return;
+    }
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try{
+      await authService.signUpWithEmailAndPassword(
+          emailController.text,
+          passwordController.text,
+      );
+    } catch (e){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()),
+          ),
+      );
+    }
   }
 
   @override
