@@ -74,7 +74,7 @@ Widget _buildUserList(){
               MaterialPageRoute(
                 builder: (context) => ChatPage(
                   receiverUserEmail: data['email'],
-                  receiverID: data['uid'],
+                  receiverUserID: data['uid'],
                 ),
                 )
             );
@@ -87,5 +87,4 @@ Widget _buildUserList(){
       }
     }
   }
-
 
