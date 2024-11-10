@@ -19,24 +19,27 @@ class _RegisterPageState extends State<RegisterPage> {
 
   //sign up user
   void signUp() async {
-    if(passwordController.text != ConfirmPasswordController.text){
+    if (passwordController.text != ConfirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content:Text("Password do not match"),
-          ),
+        const SnackBar(
+          content: Text("Passwords do not match"),
+        ),
       );
       return;
     }
+
     final authService = Provider.of<AuthService>(context, listen: false);
-    try{
+    try {
+      print('Attempting to sign up with email: ${emailController.text}');
       await authService.signUpWithEmailAndPassword(
-          emailController.text,
-          passwordController.text,
+        emailController.text,
+        passwordController.text,
       );
-    } catch (e){
+      print('Sign up successful');
+    } catch (e) {
+      print('Error during sign up: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()),
-          ),
+        SnackBar(content: Text(e.toString())),
       );
     }
   }
