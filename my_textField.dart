@@ -31,5 +31,3 @@ class MyTextField extends StatelessWidget {
     );
   }
 }
-
-
