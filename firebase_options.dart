@@ -84,3 +84,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'chatmessenger-2031b.firebasestorage.app',
   );
 }
+
