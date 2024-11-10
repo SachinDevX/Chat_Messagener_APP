@@ -1,16 +1,44 @@
-# messenger
+# FlutterChat
 
-A new Flutter project.
+A modern, real-time chat application built with Flutter that provides a seamless messaging experience across iOS and Android platforms.
 
-## Getting Started
+## ✨ Features
 
-This project is a starting point for a Flutter application.
+- Real-time messaging with Firebase backend
+- Clean, intuitive Material Design UI
+- User authentication and profile management
+- Media sharing (images, files)
+- Message status indicators (sent, delivered, read)
+- Push notifications
+- Offline message support
+- Group chat functionality
+- End-to-end message encryption
+- Dark/Light theme support
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Getting Started
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone the repository
+2. Configure Firebase credentials  
+3. Run `flutter pub get`
+4. Launch the app with `flutter run`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📱 Screenshots
+
+[Place screenshots here]
+
+## 🛠 Tech Stack
+
+- Flutter 3.0+
+- Firebase (Firestore, Authentication, Storage)
+- Provider for state management 
+- GetIt for dependency injection
+- cached_network_image for image caching
+- firebase_messaging for push notifications
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](issues).
