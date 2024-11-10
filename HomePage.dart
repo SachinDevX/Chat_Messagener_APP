@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/services_or_auth/authService.dart';
 import 'package:provider/provider.dart';
-
 import 'Chat_page.dart';
 
 class Homepage extends StatefulWidget {
@@ -14,77 +13,89 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  //instance of auth
-  final FirebaseAuth _auth =  FirebaseAuth.instance;
-  //sign user out
-  void signOut(){
-    //get auth Service
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  void signOut() {
     final authService = Provider.of<AuthService>(context, listen: false);
     authService.signOut();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Home'),
+        title: const Text('Home'),
         backgroundColor: Colors.black12,
         actions: [
-          //sign out button
           IconButton(
-              onPressed: signOut,
-              icon: const Icon(Icons.logout),
+            onPressed: signOut,
+            icon: const Icon(Icons.logout),
           )
         ],
       ),
       body: _buildUserList(),
     );
   }
-  //build a list of user except for the current logged in user
-Widget _buildUserList(){
-   return StreamBuilder<QuerySnapshot>(
-       stream: FirebaseFirestore.instance.collection('user').snapshots(),
-       builder: (context,snapshot){
-         if(snapshot.hasError){
-         return const Text('error');
+
+  Widget _buildUserList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore.collection('users').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
         }
-         if(snapshot.connectionState == ConnectionState.waiting){
-          return const Text('Loading..');
-            }
 
-            return ListView(
-            children: snapshot.data!.docs
-                .map<Widget>((doc)=> _buildUserListitem(doc))
-                .toList(),
-            );
-         },
-      );
-    }
-    //build individual user list items
-    Widget _buildUserListitem(DocumentSnapshot document) {
-    Map<String,dynamic> data = document.data()! as Map<String,dynamic>;
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-    //display all user except current user
-      if(_auth.currentUser!.email != data['email'] ){
-        return ListTile(
-          title: Text(data['email']),
-          onTap: (){
-            //pass the clicked user UID to the chat page
-            Navigator.push(
-                context,
-              MaterialPageRoute(
-                builder: (context) => ChatPage(
-                  receiverUserEmail: data['email'],
-                  receiverUserID: data['uid'],
-                ),
-                )
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Text('No users found'),
+          );
+        }
+
+        // Filter out current user and handle missing 'uid' fields
+        final users = snapshot.data!.docs
+            .where((doc) => doc.data() != null && (doc.data()! as Map<String, dynamic>).containsKey('uid'))
+            .where((doc) => (doc.data()! as Map<String, dynamic>)['uid'] != _auth.currentUser?.uid)
+            .toList();
+
+        if (users.isEmpty) {
+          return const Center(
+            child: Text('No other users found'),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: users.length,
+          itemBuilder: (context, index) {
+            final userData = users[index].data() as Map<String, dynamic>;
+            return ListTile(
+              leading: const CircleAvatar(
+                child: Icon(Icons.person),
+              ),
+              title: Text(userData['email'] ?? 'No email'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                      receiverUserEmail: userData['email'],
+                      receiverUserID: userData['uid'],
+                    ),
+                  ),
+                );
+              },
             );
           },
         );
-
-      }else{
-        //return empty container
-        return Container();
-      }
-    }
+      },
+    );
   }
-
+}
